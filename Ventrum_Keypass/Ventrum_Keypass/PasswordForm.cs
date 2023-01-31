@@ -12,18 +12,19 @@ namespace Ventrum_Keypass
 {
     public partial class PasswordForm : Form
     {
-        private string Password { get; set; }
+        public string Password { get; set; }
         public PasswordForm()
         {
             InitializeComponent();
         }
-        private void OkButton_Click(object sender, EventArgs e)
+
+        private void okbtn_Click(object sender, EventArgs e)
         {
-            Password = passwordTextBox.Text;
+            Password = pwdtextbox.Text;
             DialogResult = DialogResult.OK;
         }
 
-        private void CancelButton_Click(object sender, EventArgs e)
+        private void cancelBtn_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
         }
