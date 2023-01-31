@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Windows.Forms;
 using KeePassLib;
 using KeePassLib.Cryptography.PasswordGenerator;
+using KeePassLib.Interfaces;
 using KeePassLib.Keys;
 using KeePassLib.Serialization;
 using Microsoft.VisualBasic.ApplicationServices;
@@ -75,43 +76,56 @@ namespace Ventrum_Keypass
 
         private void NewFileHandler(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "KeyPass Database (*.kdbx)|*.kdbx";
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                try
+                saveFileDialog.Filter = "KeyPass Database (*.kdbx)|*.kdbx";
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string databaseFilePath = saveFileDialog.FileName;
-                    string password = PromptForPassword(); // Prompt the user for the password
-                    PwDatabase database = new PwDatabase();
-                    IOConnectionInfo ioc = new IOConnectionInfo();
-                    ioc.Path = databaseFilePath;
-                    database.New(ioc, new CompositeKey(new KcpPassword(password)));
-                    database.Save(ioc);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Failed to create KeyPass database file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    string password = PromptForPassword();
+                    if (string.IsNullOrEmpty(password))
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        string databaseFilePath = saveFileDialog.FileName;
+                        PwDatabase database = new PwDatabase();
+                        IOConnectionInfo ioc = new IOConnectionInfo();
+                        ioc.Path = databaseFilePath;
+                        CompositeKey compositeKey = new CompositeKey();
+                        compositeKey.AddUserKey(new KcpPassword(password));
+                        database.New(ioc, compositeKey);
+                        IStatusLogger logger = new NullStatusLogger();
+                        database.Save(logger);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Failed to create KeyPass database file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
-    private void OpenFileHandler(object sender, EventArgs e)
-    {
-        OpenFileDialog openFileDialog = new OpenFileDialog();
-        openFileDialog.Filter = "KeyPass Database (*.kdbx)|*.kdbx";
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        private void OpenFileHandler(object sender, EventArgs e)
         {
-            try
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "KeyPass Database (*.kdbx)|*.kdbx";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                string databaseFilePath = openFileDialog.FileName;
-                string password = PromptForPassword(); // Implement a method to prompt the user for the password
-                PwDatabase database = Open(databaseFilePath, password);
-                // Continue with the code to manage the opened KeyPass database
+                try
+                {
+                    string databaseFilePath = openFileDialog.FileName;
+                    string password = PromptForPassword(); // Implement a method to prompt the user for the password
+                    PwDatabase database = Open(databaseFilePath, password);
+                    // Continue with the code to manage the opened KeyPass database
+                    if (database != null)
+                    {
+
+                    }
+                } catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to open KeyPass database file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to open KeyPass database file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
             }
         }
 
