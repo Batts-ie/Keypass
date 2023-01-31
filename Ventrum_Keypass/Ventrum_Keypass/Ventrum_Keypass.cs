@@ -8,6 +8,7 @@ namespace Ventrum_Keypass
 {
     public partial class Ventrum_Keypass : Form
     {
+        private string databaseFilePath = string.Empty;
         public Ventrum_Keypass()
         {
             InitializeComponent();
@@ -79,7 +80,7 @@ namespace Ventrum_Keypass
 
                     try
                     {
-                        string databaseFilePath = saveFileDialog.FileName;
+                        databaseFilePath = saveFileDialog.FileName;
                         PwDatabase database = new PwDatabase();
                         IOConnectionInfo ioc = new IOConnectionInfo
                         {
@@ -106,7 +107,7 @@ namespace Ventrum_Keypass
             {
                 try
                 {
-                    string databaseFilePath = openFileDialog.FileName;
+                    databaseFilePath = openFileDialog.FileName;
                     string password = PromptForPassword(); // Implement a method to prompt the user for the password
                     PwDatabase database = Open(databaseFilePath, password);
                     // Continue with the code to manage the opened KeyPass database
@@ -149,11 +150,11 @@ namespace Ventrum_Keypass
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             try
             {
-                string dbfilepath = saveFileDialog.FileName;
+                databaseFilePath = saveFileDialog.FileName;
                 PwDatabase database = new PwDatabase();
                 IOConnectionInfo ioc = new IOConnectionInfo
                 {
-                    Path = dbfilepath
+                    Path = databaseFilePath
                 };
                 IStatusLogger logger = new NullStatusLogger();
                 database.Save(logger);
@@ -179,16 +180,18 @@ namespace Ventrum_Keypass
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string dbfilepath = saveFileDialog.FileName;
+                    string databaseFilePath = saveFileDialog.FileName;
                     using (PasswordForm pwdform = new PasswordForm())
                     {
                         password = pwdform.Password;
                     }
-                    PwDatabase database = Open(dbfilepath, password);
+                    PwDatabase database = Open(databaseFilePath, password);
                     if(database != null)
                     {
-                        IOConnectionInfo ioc = new IOConnectionInfo(); 
-                        // more code here
+                        IOConnectionInfo ioc = new IOConnectionInfo();
+                        ioc.Path = databaseFilePath;
+                        database.SaveAs(ioc, new CompositeKey(), true);
+                        MessageBox.Show("KeyPass database file saved successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
