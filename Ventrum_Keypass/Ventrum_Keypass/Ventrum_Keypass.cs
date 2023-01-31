@@ -1,17 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Dynamic;
-using System.IO;
-using System.Security.Cryptography;
-using System.Windows.Forms;
 using KeePassLib;
-using KeePassLib.Cryptography.PasswordGenerator;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
 using KeePassLib.Serialization;
-using Microsoft.VisualBasic.ApplicationServices;
-
 namespace Ventrum_Keypass
 {
     public partial class Ventrum_Keypass : Form
@@ -120,7 +110,17 @@ namespace Ventrum_Keypass
                     // Continue with the code to manage the opened KeyPass database
                     if (database != null)
                     {
-
+                        var kpdata = from entry in database.RootGroup.GetEntries(true)
+                                     select new
+                                     {
+                                         Title = entry.Strings.ReadSafe("Title"),
+                                         UserName = entry.Strings.ReadSafe("UserName"),
+                                         Password = entry.Strings.ReadSafe("Password"),
+                                         URL = entry.Strings.ReadSafe("URL"),
+                                         Notes = entry.Strings.ReadSafe("Notes")
+                                     };
+                        dataGridView1.DataSource = kpdata.ToList();
+                        database.Close();
                     }
                 } catch (Exception ex)
                 {
