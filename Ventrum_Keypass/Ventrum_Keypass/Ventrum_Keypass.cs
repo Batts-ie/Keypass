@@ -190,7 +190,8 @@ namespace Ventrum_Keypass
                     {
                         IOConnectionInfo ioc = new IOConnectionInfo();
                         ioc.Path = databaseFilePath;
-                        database.SaveAs(ioc, new CompositeKey(), true);
+                        IStatusLogger logger = new NullStatusLogger();
+                        database.SaveAs(ioc, true, logger);
                         MessageBox.Show("KeyPass database file saved successfully!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
