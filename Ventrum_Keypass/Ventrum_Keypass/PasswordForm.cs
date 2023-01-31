@@ -28,6 +28,7 @@ namespace Ventrum_Keypass
             else
             {
                 MessageBox.Show("Please fill in a password to continue");
+                DialogResult = DialogResult.TryAgain;
             }
         }
 
