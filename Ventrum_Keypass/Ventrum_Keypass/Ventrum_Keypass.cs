@@ -6,8 +6,6 @@ namespace Ventrum_Keypass
 {
     public partial class Ventrum_Keypass : Form
     {
-        private string _currentSaveFilePath = string.Empty;
-        //private Dictionary<string, List<>
         public Ventrum_Keypass()
         {
             InitializeComponent();
