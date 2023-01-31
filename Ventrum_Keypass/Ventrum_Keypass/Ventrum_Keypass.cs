@@ -81,8 +81,10 @@ namespace Ventrum_Keypass
                     {
                         string databaseFilePath = saveFileDialog.FileName;
                         PwDatabase database = new PwDatabase();
-                        IOConnectionInfo ioc = new IOConnectionInfo();
-                        ioc.Path = databaseFilePath;
+                        IOConnectionInfo ioc = new IOConnectionInfo
+                        {
+                            Path = databaseFilePath
+                        };
                         CompositeKey compositeKey = new CompositeKey();
                         compositeKey.AddUserKey(new KcpPassword(password));
                         database.New(ioc, compositeKey);
@@ -149,8 +151,10 @@ namespace Ventrum_Keypass
             {
                 string dbfilepath = saveFileDialog.FileName;
                 PwDatabase database = new PwDatabase();
-                IOConnectionInfo ioc = new IOConnectionInfo();
-                ioc.Path = dbfilepath;
+                IOConnectionInfo ioc = new IOConnectionInfo
+                {
+                    Path = dbfilepath
+                };
                 IStatusLogger logger = new NullStatusLogger();
                 database.Save(logger);
 
@@ -166,10 +170,12 @@ namespace Ventrum_Keypass
             string password = string.Empty;
             try
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "KeePass Database (*.kdbx)|*.kdbx|All Files (*.*)|*.*";
-                saveFileDialog.FilterIndex = 1;
-                saveFileDialog.RestoreDirectory = true;
+                SaveFileDialog saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "KeePass Database (*.kdbx)|*.kdbx|All Files (*.*)|*.*",
+                    FilterIndex = 1,
+                    RestoreDirectory = true
+                };
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -185,7 +191,6 @@ namespace Ventrum_Keypass
                         // more code here
                     }
                 }
-
             }
             catch (Exception ex)
             {
