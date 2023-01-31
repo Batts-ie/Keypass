@@ -20,8 +20,15 @@ namespace Ventrum_Keypass
 
         private void okbtn_Click(object sender, EventArgs e)
         {
-            Password = pwdtextbox.Text;
-            DialogResult = DialogResult.OK;
+            if (pwdtextbox.Text != string.Empty)
+            {
+                Password = pwdtextbox.Text;
+                DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                MessageBox.Show("Please fill in a password to continue");
+            }
         }
 
         private void cancelBtn_Click(object sender, EventArgs e)

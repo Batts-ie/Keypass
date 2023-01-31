@@ -122,7 +122,8 @@ namespace Ventrum_Keypass
                         dataGridView1.DataSource = kpdata.ToList();
                         database.Close();
                     }
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show("Failed to open KeyPass database file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
