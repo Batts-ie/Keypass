@@ -2,6 +2,8 @@ using KeePassLib;
 using KeePassLib.Interfaces;
 using KeePassLib.Keys;
 using KeePassLib.Serialization;
+using System.Windows.Forms;
+
 namespace Ventrum_Keypass
 {
     public partial class Ventrum_Keypass : Form
@@ -142,12 +144,54 @@ namespace Ventrum_Keypass
 
         private void SaveFileHandler(object sender, EventArgs e)
         {
-            MessageBox.Show("Save File");
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            try
+            {
+                string dbfilepath = saveFileDialog.FileName;
+                PwDatabase database = new PwDatabase();
+                IOConnectionInfo ioc = new IOConnectionInfo();
+                ioc.Path = dbfilepath;
+                IStatusLogger logger = new NullStatusLogger();
+                database.Save(logger);
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Failed to save KeyPass database file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void SaveFileAsHandler(object sender, EventArgs e)
         {
-            MessageBox.Show("Save File As");
+            string password = string.Empty;
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "KeePass Database (*.kdbx)|*.kdbx|All Files (*.*)|*.*";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string dbfilepath = saveFileDialog.FileName;
+                    using (PasswordForm pwdform = new PasswordForm())
+                    {
+                        password = pwdform.Password;
+                    }
+                    PwDatabase database = Open(dbfilepath, password);
+                    if(database != null)
+                    {
+                        IOConnectionInfo ioc = new IOConnectionInfo(); 
+                        // more code here
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show("Failed to save KeyPass database file: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void CloseFileHandler(object sender, EventArgs e)
